@@ -2,10 +2,12 @@ package example.calculater;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -27,15 +29,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int KEY_PLUS = 12;
     private final int KEY_EQUAL = 13;
     private final int KEY_Dot = 14;
+    private final int KEY_Times = 15;
+    private final int KEY_Divide = 16;
+
 
 
     int buttonId[] = {R.id.button0, R.id.button1, R.id.button2, R.id.button3, R.id.button4,
             R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9,
-            R.id.buttonClear, R.id.buttonMinus, R.id.buttonPlus, R.id.buttonEqual, R.id.buttonDot
+            R.id.buttonClear, R.id.buttonMinus, R.id.buttonPlus, R.id.buttonEqual, R.id.buttonDot,
+            R.id.buttonTimes, R.id.buttonDivide
     };
 
     Button button[];
     TextView displayTv;
+    ScrollView scrollView;
     float total = 0;
     float value;
     String nowValue;
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         button = new Button[buttonId.length];
         displayTv = (TextView) findViewById(R.id.display);
+        scrollView = (ScrollView) findViewById(R.id.scv);
 
         for (i = 0; i < buttonId.length; i++) {
             button[i] = (Button) findViewById(buttonId[i]);
@@ -57,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+
+        scrollView.scrollTo(0, displayTv.getBottom());
+//
 
 
         for (i = 0; i < buttonId.length; i++) {
@@ -75,15 +86,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     case KEY_PLUS:
                         nowValue = displayTv.getText().toString();
-                        value = Float.parseFloat(nowValue);
-                        total += value;
-                        displayTv.setText("");
+                        nowValue += "+";
+                        displayTv.setText(nowValue);
                         break;
                     case KEY_MINUS:
                         nowValue = displayTv.getText().toString();
-                        value = Float.parseFloat(nowValue);
-                        total -= value;
-                        displayTv.setText("");
+                        nowValue += "-";
+                        displayTv.setText(nowValue);
+
                         break;
                     case KEY_EQUAL:
                         nowValue = String.valueOf(total);
@@ -96,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
+    }
+
+    private float calc(){
+        return (float) 0.0;
     }
 
 
