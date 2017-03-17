@@ -10,20 +10,12 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     int i;
-
-    private final int KEY_0 = 0;
-    private final int KEY_1 = 1;
-    private final int KEY_2 = 2;
-    private final int KEY_3 = 3;
-    private final int KEY_4 = 4;
-    private final int KEY_5 = 5;
-    private final int KEY_6 = 6;
-    private final int KEY_7 = 7;
-    private final int KEY_8 = 8;
-    private final int KEY_9 = 9;
     private final int KEY_PLUS = 10;
     private final int KEY_MINUS = 11;
     private final int KEY_Times = 12;
@@ -33,6 +25,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int KEY_CLEAR = 16;
     private final int PMTD = 17;
 
+    /* calc */
+    long letterNum;
+    double totalValue = 0;
+    ArrayList<Long> exponantialNum = new ArrayList<>();
+    ArrayList<Character> letterValue = new ArrayList<>();
+    ArrayList<Double> singleValue = new ArrayList<>();
+    DecimalFormat decimalFormat = new DecimalFormat("################.#############");
+    int asd;
+    long startLetterNum = 0, endLetterNum = 0;
+    boolean byStatusNum = false;
+    int expoNum_idx = 0;
+    /*------*/
 
     int buttonId[] = {R.id.button0, R.id.button1, R.id.button2, R.id.button3, R.id.button4,
             R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9,
@@ -43,13 +47,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button button[];
     TextView displayTv, totalTv;
     ScrollView scrollView;
-    float total = 0;
-    float value;
     String nowValue;
-    int lastValue = 99, secondLastValue = 10;
+    int lastValue = 99;
     boolean byFstLetter = true;
     boolean byZeroWatcher = false;  /*To protect double Zero when byFstLetter+1 is true*/
     boolean byDotWatcher = false;   /*To protect double Dot when ~~~*/
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 switch (i) {
                     case KEY_CLEAR:
-                        calc();
                         displayTv.setText("");
                         byFstLetter = true;
                         lastValue = KEY_CLEAR;
@@ -172,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         byFstLetter = true;
                         break;
                     case KEY_Dot:
-                        if(!byFstLetter && !byDotWatcher){
+                        if (!byFstLetter && !byDotWatcher) {
                             nowValue += ".";
                             displayTv.setText(nowValue);
                             byDotWatcher = true;
@@ -180,7 +182,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         break;
                     case KEY_EQUAL:
-
+                        calc(nowValue);
+                        lastValue = KEY_EQUAL;
+                        letterValue.clear();
+                        exponantialNum.clear();
                         break;
                 }
 
@@ -188,14 +193,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
-        totalTv.setText(lastValue + " " + byFstLetter + " " + byZeroWatcher + " " + byDotWatcher);
+        //totalTv.setText(lastValue + " " + byFstLetter + " " + byZeroWatcher + " " + byDotWatcher);
         if (lastValue != 0) byZeroWatcher = false;
-        if(byFstLetter) byDotWatcher = false;
+        if (byFstLetter) byDotWatcher = false;
     }
 
-    private float calc() {
+    public double calc(String nowValue) {
+        expoNum_idx = 0;
+        startLetterNum = 0;
+        endLetterNum = 0;
+        exponantialNum.clear();
+        singleValue.clear();
+        letterValue.clear();
 
-        return (float) 0.0;
+        nowValue += null;
+
+        for (letterNum = 0; letterNum < nowValue.length(); letterNum++) {
+
+            letterValue.add(nowValue.charAt((int) letterNum));
+            asd = (int) letterValue.get((int) letterNum);
+
+
+            if ((47 < asd && asd < 58) || letterValue.get((int) letterNum).equals('.')) {
+
+                if (!byStatusNum) {
+                    startLetterNum = letterNum;
+                    exponantialNum.add((long) -1);
+                    byStatusNum = true;
+                }
+                /*
+                displayTv.setText(startLetterNum + " " + endLetterNum + " " + byStatusNum);
+                totalTv.setText("" + letterValue.get((int) letterNum));
+                */
+                exponantialNum.set(expoNum_idx, exponantialNum.get(expoNum_idx) + 1);
+            } else if (byStatusNum) {
+                endLetterNum = letterNum;
+                byStatusNum = false;
+                expoNum_idx += 1;
+                totalTv.setText(startLetterNum + " " + endLetterNum);
+
+                singleValue.add(Double.parseDouble(nowValue.subSequence((int) startLetterNum, (int) endLetterNum).toString()));
+
+                if (startLetterNum == 0) {
+                    totalValue = singleValue.get(0);
+                } else {
+                    switch (letterValue.get((int) startLetterNum - 1)) {
+                        case '+':
+                            totalValue += singleValue.get(expoNum_idx - 1);
+                            break;
+                        case '-':
+                            totalValue -= singleValue.get(expoNum_idx - 1);
+                            break;
+                        case '×':
+                            totalValue *= singleValue.get(expoNum_idx - 1);
+                            break;
+                        case '÷':
+                            totalValue /= singleValue.get(expoNum_idx - 1);
+                            break;
+                    }
+                }
+
+            }
+            // if (letterValue.get(expoNum_idx + 1) == null) {
+            //    totalTv.setText("Let it go!");
+            // }
+
+        }
+        if (decimalFormat.format(totalValue).length() <= 9) {
+            totalTv.setText(decimalFormat.format(totalValue));
+        }
+        totalTv.setText(totalValue + "");
+
+        return 0;
     }
 
 
