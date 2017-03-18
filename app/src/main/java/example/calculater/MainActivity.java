@@ -2,14 +2,10 @@ package example.calculater;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -83,22 +79,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (0 < i && i < 10) {
 
-                    /*
-                    if (2 < nowValue.length()) {
-                        secondLastValue = Integer.parseInt("" + nowValue.charAt(nowValue.length() - 2));
-                    }
-                    */
 
                     nowValue += i;
                     lastValue = i;
                     displayTv.setText(nowValue);
                     byFstLetter = false;
 
-                    /*
-                    if (byFstLetter && lastValue == 0) {
-                        nowValue = nowValue.substring(0, nowValue.length() - 1);
-                    }
-                    */
 
                 }
 
@@ -111,9 +97,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         byFstLetter = false;
                     }
                 }
-
+                calc(nowValue);
                 switch (i) {
                     case KEY_CLEAR:
+                        nowValue = null;
+                        totalTv.setText("");
                         displayTv.setText("");
                         byFstLetter = true;
                         lastValue = KEY_CLEAR;
@@ -182,19 +170,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         break;
                     case KEY_EQUAL:
-                        calc(nowValue);
-                        lastValue = KEY_EQUAL;
-                        letterValue.clear();
-                        exponantialNum.clear();
+                        displayTv.setText(totalTv.getText());
+
                         break;
                 }
 
 
+                lastValue = KEY_EQUAL;
+                letterValue.clear();
+                exponantialNum.clear();
             }
 
         }
-        //totalTv.setText(lastValue + " " + byFstLetter + " " + byZeroWatcher + " " + byDotWatcher);
-        if (lastValue != 0) byZeroWatcher = false;
+         if (lastValue != 0) byZeroWatcher = false;
         if (byFstLetter) byDotWatcher = false;
     }
 
@@ -221,10 +209,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     exponantialNum.add((long) -1);
                     byStatusNum = true;
                 }
-                /*
-                displayTv.setText(startLetterNum + " " + endLetterNum + " " + byStatusNum);
-                totalTv.setText("" + letterValue.get((int) letterNum));
-                */
+
                 exponantialNum.set(expoNum_idx, exponantialNum.get(expoNum_idx) + 1);
             } else if (byStatusNum) {
                 endLetterNum = letterNum;
@@ -254,9 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
             }
-            // if (letterValue.get(expoNum_idx + 1) == null) {
-            //    totalTv.setText("Let it go!");
-            // }
+
 
         }
         if (decimalFormat.format(totalValue).length() <= 9) {

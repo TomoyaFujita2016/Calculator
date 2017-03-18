@@ -33,7 +33,7 @@
 
                     android:text=""
                     android:textColor="#41E65C"
-                    android:textSize="30dip" />
+                    android:textSize="20dip" />
             </LinearLayout>
         </ScrollView>
 
